@@ -1,68 +1,63 @@
-import cv2
+# Kita import library yang digunakan
+import cv2 
 
-def capture_video():
-    """Function to capture video from the default webcam and apply a timewarp filter."""
-    # Initialize video capture
+def capture_video(): #fungsi utama untuk mengaplikasikan filter
+    # digunakan untuk membuka kamera (webcam)
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
-        print("Error: Unable to access the webcam.")
+        print("Tidak bisa membuka camera. Coba lagi")
         return
 
-    # Configuration
-    threshold = 3  # Number of pixels to iterate
-    is_upside_down = False  # Toggle for flipping the frame
+    # pengaturan time warp 
+    threshold = 2  # Jumlah iterasi pixel persatuan waktu. makin tinggi maka garis distorsi akan semakin cepat.
+    is_upside_down = False  # fungsi ini digunakan untuk membalik pixel vertikal
 
-    # Read the initial frame and validate
+    # Kita baca frame pertama
     ret, initial_frame = cap.read()
     if not ret:
-        print("Error: Unable to read the initial frame from webcam.")
+        print("Error: Frame tidak dapat dibaca.")
         cap.release()
-        return
+        return # di cek keberhasilannya semisal gagal maka pesan di atas akan keluar.
 
-    # Create a copy of the initial frame for processing
-    warped_frame = initial_frame.copy()
-    temp_frame = initial_frame.copy()
-    current_row = 0
+    warped_frame = initial_frame.copy() # salinan dari frame yang berhasil disimpan
+    temp_frame = initial_frame.copy() # kemudian disimpan sementara di sini.
+    current_row = 0 # indeks awal
 
     print(f"Frame dimensions: {initial_frame.shape}")
 
     while True:
-        # Read the current frame
         ret, frame = cap.read()
         if not ret:
-            print("Error: Unable to read a frame from the webcam.")
+            print("Gagal membaca frame dari kamera.")
             break
 
-        # Flip the frame if needed
         frame = cv2.flip(frame, int(not is_upside_down))
 
-        # Apply the timewarp filter logic
+        # fungsi ini digunakan untuk menggabungkan bagian frame yang baru dan lama kedalam efek timewarp
         temp_frame[current_row:current_row + threshold] = frame[current_row:current_row + threshold]
         warped_frame[:current_row] = temp_frame[:current_row]
         warped_frame[current_row:] = frame[current_row:]
 
-        # Draw a green line to indicate the current row
+        # fungsi untuk membuat garis hijau peanda distorsi
         cv2.line(warped_frame, (0, current_row), (warped_frame.shape[1], current_row), (0, 255, 0), thickness=2)
 
-        # Increment the current row by the threshold value
         current_row += threshold
 
-        # Display the video with the timewarp effect
+        # tampilkan video
         cv2.imshow('Timewarp Filter', warped_frame)
 
-        # Break the loop if the ESC key is pressed or the frame height is exceeded
+        # memberhentikan proses semisal tombol esc ditekan (27 adalah ASCII untuk esc)
         if cv2.waitKey(33) == 27 or current_row >= frame.shape[0]:
             break
 
-    # Save the resulting image
+    # kita simpan dalam bentuk file gambar
     output_filename = 'timewarp_output.png'
     cv2.imwrite(output_filename, warped_frame)
-    print(f"Timewarp filter applied and saved as '{output_filename}'.")
+    print(f"Timewarp filter berhasil disimpan sebagai '{output_filename}'.")
 
-    # Release resources
     cap.release()
     cv2.destroyAllWindows()
 
-# Run the capture video function
-if _name_ == "_main_":
+# Jalankan filter
+if __name__ == "__main__":
     capture_video()
