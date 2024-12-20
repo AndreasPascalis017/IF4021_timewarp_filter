@@ -1,34 +1,68 @@
-import cv2      ## Import library yang akan digunakan.
-## cv2 digunakan untuk pengolahan gambar dan video dalam proyek.
+import cv2
 
-cap = cv2.VideoCapture(0) ## fungsi untuk membuka kamera default (webcam).
+def capture_video():
+    """Function to capture video from the default webcam and apply a timewarp filter."""
+    # Initialize video capture
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("Error: Unable to access the webcam.")
+        return
 
-threshold = 1  ## mengambil 1 piksel yang akan digunakan sebagai iteras (masih akan dicoba lebih lanjut niali yang sesuai)
-ret, temp = cap.read()  ## setelah membaca 1 piksel disimpan sementara di temp.
-lasth = 0  ## variabel untuk melacak baris yang sedang diproses (semua nama variabel masih berupa nama acak mungkin ada yang diubah ada yang tidak).
-newing = temp.copy()
-upsidedown = False
+    # Configuration
+    threshold = 3  # Number of pixels to iterate
+    is_upside_down = False  # Toggle for flipping the frame
 
-print(temp.shape)
-while True:
-    ret, img = cap.read()  ## setelah membaca frame disimpan dalam img.
-    img = cv2.flip(img, int(not upsidedown))
-    if (type(img) == type(None)):
-        break
-    temp[lasth:lasth + threshold] = img[lasth:lasth +threshold]
+    # Read the initial frame and validate
+    ret, initial_frame = cap.read()
+    if not ret:
+        print("Error: Unable to read the initial frame from webcam.")
+        cap.release()
+        return
 
-    newing[0: lasth] = temp[0: lasth]
-    newing[lasth:-1] = img[lasth:-1]
-    cv2.line(newing, (0, lasth), (640, lasth),
-             (0, 255, 0), thickness=2)  ## untuk membuat garis penanda distorsi (hijau)
-    lasth += threshold
-    cv2.imshow('video', newing)  ## menampilkan video dalam window.
-    if cv2.waitKey(33) == 27:
-        break
-    if lasth >= img.shape[1]:
-        break
+    # Create a copy of the initial frame for processing
+    warped_frame = initial_frame.copy()
+    temp_frame = initial_frame.copy()
+    current_row = 0
 
-cv2.imwrite('image.png', newing)  ## file disimpan dengan nama image.png
-cv2.destroyAllWindows()  
+    print(f"Frame dimensions: {initial_frame.shape}")
 
-## update terakhir tgl 14-12-2024
+    while True:
+        # Read the current frame
+        ret, frame = cap.read()
+        if not ret:
+            print("Error: Unable to read a frame from the webcam.")
+            break
+
+        # Flip the frame if needed
+        frame = cv2.flip(frame, int(not is_upside_down))
+
+        # Apply the timewarp filter logic
+        temp_frame[current_row:current_row + threshold] = frame[current_row:current_row + threshold]
+        warped_frame[:current_row] = temp_frame[:current_row]
+        warped_frame[current_row:] = frame[current_row:]
+
+        # Draw a green line to indicate the current row
+        cv2.line(warped_frame, (0, current_row), (warped_frame.shape[1], current_row), (0, 255, 0), thickness=2)
+
+        # Increment the current row by the threshold value
+        current_row += threshold
+
+        # Display the video with the timewarp effect
+        cv2.imshow('Timewarp Filter', warped_frame)
+
+        # Break the loop if the ESC key is pressed or the frame height is exceeded
+        if cv2.waitKey(33) == 27 or current_row >= frame.shape[0]:
+            break
+
+    # Save the resulting image
+    output_filename = 'timewarp_output.png'
+    cv2.imwrite(output_filename, warped_frame)
+    print(f"Timewarp filter applied and saved as '{output_filename}'.")
+
+    # Release resources
+    cap.release()
+    cv2.destroyAllWindows()
+
+# Run the capture video function
+if _name_ == "_main_":
+    capture_video()
