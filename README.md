@@ -27,6 +27,12 @@ TBA (To be Added)
 ---
 
 ## **Logbook**
-TBA
-
+|NO| Tanggal | Deskripsi|
+|--|---------|----------|
+|1 | 05 Desember 2024 | Membuat repositori dan README.md|
+|2 | 11 Desember 2024 | Update file README.md |
+|3 | 12 Desember 2024 | menyicil lapporan |
+|4 | 14 Desember 2024 | Input koding versi kasar |
+|5 | 17 Desember 2024 | Menyusun clean code |
+|6 | 20 Desember 2024 | Push dan Update clean code |
 ---
