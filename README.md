@@ -6,7 +6,7 @@
 |----|---------------------|------------|------------|
 | 1  | Andreas Pascalis | 121140017   | AndreasPascalis017 |
 | 2  | Adriel Gideon Benedict| 121140196  |   121140196-Adriel       |
-| 3  | Natanael Argajova    | 121140205 | Natanargajov  |
+| 3  | Natanael Argajova    | 121140205 | Natanargajov / Natargajov  |
 
 ---
 
