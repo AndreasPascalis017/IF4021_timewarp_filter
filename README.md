@@ -1,5 +1,14 @@
 # **IF4021 Timewarp Filter**
 
+Project ini merupakan Tugas Besar untuk Mata Kuliah IF4021 (Multimedia Technology) Teknik Informatika ITERA 
+yang diampu oleh : 
+
+dosen pengampu : Bpk Martin Clinton Tosima Manulang, S.T., M.T.
+
+NIP : 19930109 201903 1 017
+
+NIDN : 0009019302
+
 ---
 
 | No | Nama                | NIM        |  Username  |
